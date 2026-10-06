@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare two XSD files privately in your browser. Ignore indentation and blank lines, and see structural differences.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>XSD Compare</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <span class="brand"><span class="brand-mark" aria-hidden="true">&lt;<i>/</i>&gt;</span> XSD Compare</span>
+    <span class="privacy">Files stay on your device.</span>
+  </header>
+  <main>
+    <section aria-labelledby="page-title">
+      <div class="intro">
+        <h1 id="page-title">Compare two XSD files</h1>
+        <p>Find structural differences. Ignore indentation and blank lines.</p>
+      </div>
+      <div class="file-grid">
+        <section class="file-panel" aria-labelledby="first-title">
+          <span class="file-number" aria-hidden="true">01</span>
+          <h2 id="first-title">First file</h2>
+          <div class="file-choice">
+            <svg class="file-icon" viewBox="0 0 48 60" fill="none" aria-hidden="true"><path d="M7 2h23l13 14v39a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Z"/><path d="M30 2v14h13"/></svg>
+            <h3 id="first-name">Choose an XSD file</h3>
+            <p id="first-meta">.xsd files only</p>
+            <div class="file-input-wrap"><span class="select-label" aria-hidden="true">Select first XSD</span><input type="file" id="first-file" accept=".xsd" aria-label="Select first XSD" aria-describedby="first-name first-meta"></div>
+          </div>
+        </section>
+        <section class="file-panel" aria-labelledby="second-title">
+          <span class="file-number" aria-hidden="true">02</span>
+          <h2 id="second-title">Second file</h2>
+          <div class="file-choice">
+            <svg class="file-icon" viewBox="0 0 48 60" fill="none" aria-hidden="true"><path d="M7 2h23l13 14v39a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Z"/><path d="M30 2v14h13"/></svg>
+            <h3 id="second-name">Choose an XSD file</h3>
+            <p id="second-meta">.xsd files only</p>
+            <div class="file-input-wrap"><span class="select-label" aria-hidden="true">Select second XSD</span><input type="file" id="second-file" accept=".xsd" aria-label="Select second XSD" aria-describedby="second-name second-meta"></div>
+          </div>
+        </section>
+      </div>
+      <div class="compare-action">
+        <button id="compare" type="button" disabled>Compare files</button>
+        <p id="selection-status" role="status">Select both files to begin</p>
+      </div>
+    </section>
+    <section class="results-section" aria-labelledby="results-title" aria-busy="false">
+      <h2 id="results-title">Results</h2>
+      <div id="results-body" class="results-body empty">
+        <h3>Your comparison will appear here</h3>
+        <p>Select two files, then compare.</p>
+      </div>
+    </section>
+    <details class="rules">
+      <summary>Comparison rules</summary>
+      <div>
+        <p>Indentation, blank lines, whitespace-only text between tags, comments, processing instructions, and attribute order are ignored.</p>
+        <p>Element names, attributes, meaningful text, and child order are compared. Spaces inside values remain significant, subject to XML parser normalization.</p>
+        <p>Namespace prefixes on names are resolved; prefixes inside values such as <code>type="xs:string"</code> are compared literally. Paths show namespace URIs in braces.</p>
+        <p>This compares the selected documents, not full schema equivalence or XSD validity. Imports and includes are not expanded. Inserted or reordered elements can produce multiple differences.</p>
+      </div>
+    </details>
+    <noscript><p class="error-note">Enable JavaScript to compare XSD files in your browser.</p></noscript>
+  </main>
+  <footer>Processed in your browser. No uploads.</footer>
+</body>
+</html>
