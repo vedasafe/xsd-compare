@@ -23,10 +23,19 @@ before(async () => {
     } catch { res.writeHead(404).end('Not found'); }
   });
   await new Promise(done => server.listen(0, '127.0.0.1', done));
-  base = `http://127.0.0.1:${server.address().port}`;
+  base = process.env.XSD_TEST_URL || `http://127.0.0.1:${server.address().port}`;
   browser = await chromium.launch({headless:true, ...(process.env.XSD_BROWSER_CHANNEL ? {channel:process.env.XSD_BROWSER_CHANNEL} : {})});
   page = await browser.newPage({viewport:{width:1440,height:1000}});
   page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => {
+    const text = message.text();
+    // Chromium adds these two inline styles to its detached XML parsererror
+    // document. CSP correctly blocks them; no parser markup enters the UI.
+    const parserDiagnostic = text.startsWith('Applying inline style violates')
+      && ['sha256-ICa0DhwZQJsOd/Rn0N8H6FdQ71GfNL+op2zhAQ+Y4mM=',
+          'sha256-ZD0chCyBaNHl+4UwQHJIHGoYhKwMeyCXGgJTKW5/67E='].some(hash => text.includes(hash));
+    if (['error','warning'].includes(message.type()) && !parserDiagnostic) errors.push(text);
+  });
   await page.goto(base);
 });
 after(async () => { await browser?.close(); await new Promise(done => server ? server.close(done) : done()); });
@@ -78,6 +87,10 @@ test('decodes UTF-16 schemas', async () => {
 });
 test('GUI selects two files, compares, clears stale output and reports errors safely', async () => {
   await page.goto(base);
+  await page.waitForLoadState('networkidle');
+  const requests = [];
+  const record = request => requests.push(request.url());
+  page.on('request', record);
   assert.equal(await page.title(), 'XSD Compare');
   assert.equal(await page.getByRole('button',{name:'Compare files',exact:true}).isDisabled(), true);
   await page.locator('#first-file').setInputFiles(file('first.xsd', '<a/>'));
@@ -95,6 +108,8 @@ test('GUI selects two files, compares, clears stale output and reports errors sa
   await page.locator('#second-file').setInputFiles(file('wrong.txt','<a/>'));
   assert.equal(await page.getByRole('button',{name:'Compare files',exact:true}).isDisabled(), true);
   assert.match(await page.locator('#selection-status').innerText(), /\.xsd/);
+  page.off('request', record);
+  assert.deepEqual(requests, [], 'Selecting and comparing files must not make network requests');
   assert.deepEqual(errors, []);
 });
 test('desktop and mobile have no horizontal overflow', async () => {

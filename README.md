@@ -12,9 +12,9 @@ The browser version shares the desktop comparison rules below. It supports UTF-8
 
 ### GitHub Pages
 
-The intended destination is `vedasafe/xsd-compare`. The repository contains `.github/workflows/pages.yml`, which publishes **only `web/`** when those files change on `main` or when the workflow is run manually. In the repository's Settings → Pages, select **GitHub Actions** as the publishing source. This follows [GitHub's custom Pages workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The app is deployed at **[vedasafe.github.io/xsd-compare](https://vedasafe.github.io/xsd-compare/)**. Source is available at **[vedasafe/xsd-compare](https://github.com/vedasafe/xsd-compare)**.
 
-Publishing still requires an authenticated GitHub session and a successful deployment run. The intended public address is `https://vedasafe.github.io/xsd-compare/`; its presence here is not a claim that deployment has completed.
+The repository contains `.github/workflows/pages.yml`, which publishes **only `web/`** when app, test, or workflow files change on `main`, or when the workflow is run manually. A second job runs browser tests against the published URL, including verifying that file comparison makes no network requests. In forks, select **GitHub Actions** in Settings → Pages as the publishing source. This follows [GitHub's custom Pages workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ### Browser regression tests
 
